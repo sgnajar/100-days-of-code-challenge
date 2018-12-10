@@ -1,0 +1,22 @@
+SasanNajar
+Email: sasangnajar@gmail.com, Twitter:@SasanGN
+
+install.packages('knitr', dependencies = T)
+library(knitr)
+
+using mtdata dataset
+
+```{r}
+summary(mtcars)
+```
+
+output car(s) that have greater than 30 mpg and have more than 100 raw horsepower
+```{r}
+subset(mtcars, mpg > 30 & hp > 100)
+```
+
+output car(s) that have greater or equal to 30 mpg or have more than 100 raw horsepower
+```{r}
+subset(mtcars, mpg >= 30 | hp > 100)
+```
+
