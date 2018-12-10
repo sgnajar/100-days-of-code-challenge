@@ -6,3 +6,5 @@
 ### Day 1: Dec 09, 2018
 **Today's Progress**: I've gone through many exercises on Udacity. Started working on a Data Analysis using R. Used different visualization packages. 
 
+### Day 2: Dec 10, 2018
+**Today's Progress**: I've gone through many exercises on Udacity. Started working on a Data Analysis using R. worked with variables, dataframes, matrices.
