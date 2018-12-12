@@ -67,3 +67,14 @@ qplot(data = inFile, x = tenure/365, binwidth = .25,
       xlab('Number of years using fb') +
       ylab('Number of users in sample')
 ```
+
+summary(inFile$age)
+## User Ages
+```{r}
+qplot(data = inFile, x = age, binwidth = 1,
+      color = I('black'), fill = I('#094009')) +
+      scale_x_continuous(breaks = seq(133,113,5)) +
+      xlab('Ages using fb') +
+      ylab('Number of users in sample')
+```
+
