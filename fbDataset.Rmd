@@ -1,6 +1,8 @@
 ---
 title: "FBdata"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -13,7 +15,7 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-## Reading in Data tab separated file // read.csv or read.delim
+## Reading in the tab separated file // read.csv or read.delim
 ```{r}
 getwd()
 list.files()
@@ -52,6 +54,49 @@ qplot(x = friend_count, data = subset(inFile, !is.na(gender)), binwidth = 25) +
   scale_x_continuous(limits = c(0, 1000), breaks = seq(0, 1000, 50)) +
   facet_wrap(~gender)
 ```
+
+
+## box plots
+## Using boxplot of friend count by gender instead of histogram, we can see the differences between the median of the two groups.
+```{r}
+qplot(x = gender, y = friend_count, 
+      data = subset(inFile, !is.na(gender)), 
+      geom = 'boxplot', ylim = c(0,1000))
+
+qplot(x = gender, y = friend_count, 
+      data = subset(inFile, !is.na(gender)), 
+      geom = 'boxplot') +
+  scale_y_continuous(limits = c(0,1000))
+
+qplot(x = gender, y = friend_count, 
+      data = subset(inFile, !is.na(gender)), 
+      geom = 'boxplot') +
+  coord_cartesian(ylim = c(0, 1000))
+
+```
+
+```{r}
+qplot(x = gender, y = friend_count, 
+      data = subset(inFile, !is.na(gender)), 
+      geom = 'boxplot') +
+  coord_cartesian(ylim = c(0, 250))
+## to console
+by(inFile$friend_count, inFile$gender, summary)
+
+```
+
+## who initiated more friendships in the dataset? men or female?
+```{r}
+qplot(x = gender, y = friendships_initiated, 
+      data = subset(inFile, !is.na(gender)), 
+      geom = 'boxplot') +
+  coord_cartesian(ylim = c(0, 150))
+## to console
+by(inFile$friendships_initiated, inFile$gender, sum)
+by(inFile$friendships_initiated, inFile$gender, summary)
+
+```
+
 ## who has more fb friends? male or female?
 ## Statistics 'by' Gender
 ```{r}
@@ -78,7 +123,6 @@ qplot(data = inFile, x = age, binwidth = 1,
       ylab('Number of users in sample')
 ```
 
-
 ## Transforming friend_count data 
 ```{r}
 library(gridExtra)
@@ -101,10 +145,65 @@ p6 <- p4 + scale_x_sqrt()
 grid.arrange(p4, p5, p6, ncol = 1)
 ```
 
+## Adding a scaling layer
+```{r}
+library(ggplot2)
+library(gridExtra)
+logScale <- qplot(x = log10(friend_count), data = inFile)
+countScale <- ggplot(aes(x = friend_count), data = inFile) + geom_histogram() + scale_x_log10()
+grid.arrange(logScale, countScale, ncol = 2)
+
+qplot(data = inFile, x = friend_count) + scale_x_log10()
+```
+
+## who on average has more friends? men or female, created histogram before, now creating frequency polygons instead
+## Frequency Polygons
+```{r}
+qplot(x = friend_count, data = subset(inFile, !is.na(gender)), binwidth = 25) +
+  scale_x_continuous(limits = c(0, 1000), breaks = seq(0, 1000, 50)) +
+  facet_wrap(~gender)
+
+qplot(x = friend_count, data = subset(inFile, !is.na(gender)), binwidth = 10, geom = 'freqpoly', color = gender) +
+  scale_x_continuous(limits = c(0, 1000), breaks = seq(0, 1000, 50))
+
+## still this plot does not answer the proposed question but if we change y-axis scale, we can see that male have higher friend counts on average than women
+
+qplot(x = friend_count, y = ..count../sum(..count..), 
+      data = subset(inFile, !is.na(gender)),
+      xlab = 'Friend count',
+      ylab = 'Proportion of Users with that friend count',
+      binwidth = 10, geom = 'freqpoly', color = gender) +
+  scale_x_continuous(limits = c(0, 1000), breaks = seq(0, 1000, 50))
+
+```
+
+## determine which gender creates more likes on the world wide web ("www_likes")
+```{r}
+qplot(x = www_likes, 
+      data = subset(inFile,!is.na(gender)),
+     geom = 'freqpoly', color = gender) +
+  scale_x_continuous() + scale_x_log10()
+## print to console
+by(inFile$www_likes, inFile$gender, sum)
+```
 
 
+## sometimes variables have lots of zero values
+## logical solution
+## what percent of check in using mobile?
 
-
+```{r}
+summary(inFile$mobile_likes)
+summary(inFile$mobile_likes > 0)
+## booleans ifelse(..., 1, 0)
+## 1: checked in using mobile
+## 0: checked in not using mobile
+mobile_checkedIn <- NA
+inFile$mobile_checkedIn <- ifelse(inFile$mobile_likes > 0, 1, 0)
+inFile$mobile_checkedIn <- factor(inFile$mobile_checkedIn)
+summary(inFile$mobile_checkedIn)
+sum(inFile$mobile_checkedIn == 1) / length(inFile$mobile_checkedIn)
+```
 
 
 
