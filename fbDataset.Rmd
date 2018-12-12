@@ -1,0 +1,69 @@
+---
+title: "FBdata"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+## Reading in Data tab separated file // read.csv or read.delim
+```{r}
+getwd()
+list.files()
+inFile <- read.csv('pseudo_facebook.tsv', sep= '\t')
+## inFile2 <- read.delim('pseudo_facebook.tsv')
+names(inFile)
+```
+
+## Histogram of Users' Birthdays + faceting
+```{r}
+library(ggplot2)
+qplot(data = inFile, x = dob_day) +
+  scale_x_continuous(breaks = 1:31) +
+  facet_wrap(~dob_month, ncol = 3)
+```
+
+## question here is based on the dataset, how many friend you got and if you post on fb, how many audience you have
+
+## Friend Count
+```{r}
+qplot(data = inFile, x = friend_count, xlim = c(0,1000))
+qplot(data = inFile, x = friend_count) +
+  scale_x_continuous(limits = c(0,1000))
+```
+## Adjusting the binwidth
+```{r}
+qplot(data = inFile, x = friend_count, binwidth = 25) +
+  scale_x_continuous(limits = c(0,1000), breaks = seq(0, 1000, 50))
+```
+
+## faceting and divide the histogram into two plot, based on their gender, male and female, there was an  extra plot of NA, so here this code is going to omit NA plot
+## or use data = na.omit(inFile)
+
+```{r}
+qplot(x = friend_count, data = subset(inFile, !is.na(gender)), binwidth = 25) +
+  scale_x_continuous(limits = c(0, 1000), breaks = seq(0, 1000, 50)) +
+  facet_wrap(~gender)
+```
+## who has more fb friends? male or female?
+## Statistics 'by' Gender
+```{r}
+table(inFile$gender)
+by(inFile$friend_count, inFile$gender, summary)
+```
+
+## Tenure, how many years using fb
+```{r}
+qplot(data = inFile, x = tenure/365, binwidth = .25,
+      color = I('black'), fill = I('#099009')) +
+      scale_x_continuous(breaks = seq(1,7,1), limits = c(0,7)) +
+      xlab('Number of years using fb') +
+      ylab('Number of users in sample')
+```
