@@ -78,3 +78,35 @@ qplot(data = inFile, x = age, binwidth = 1,
       ylab('Number of users in sample')
 ```
 
+
+## Transforming friend_count data 
+```{r}
+library(gridExtra)
+library(ggplot2)
+summary(inFile$friend_count)
+summary(log10(inFile$friend_count + 1))
+summary(sqrt(inFile$friend_count))
+p1 <- qplot(data = inFile, x = friend_count)
+p2 <- qplot(data = inFile, x = log10(friend_count + 1))
+p3 <- qplot(data = inFile, x = sqrt(friend_count))
+grid.arrange(p1, p2, p3, ncol = 1)
+```
+
+## Transforming friend_count data using scales
+```{r}
+p4 <- ggplot(aes(x = friend_count), data = inFile) + geom_histogram()
+p5 <- p4 + scale_x_log10()
+p6 <- p4 + scale_x_sqrt()
+
+grid.arrange(p4, p5, p6, ncol = 1)
+```
+
+
+
+
+
+
+
+
+
+
