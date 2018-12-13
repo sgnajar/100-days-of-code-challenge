@@ -250,3 +250,56 @@ ggplot(diamonds, aes(x = carat, y = price)) +
                      limits=c(0 , quantile(diamonds$price, 0.99)),
                      labels=dollar)
 ```
+
+## create a scatterplot of price vs. volume (x * y * z). new variable for volume in the diamonds data frame.
+```{r}
+diamonds2 <- diamonds %>%
+  mutate(volume=x*y*z)
+
+ggplot(diamonds2, aes(x = volume, y = price)) + 
+  geom_point()
+```
+
+## correlation of price and volume
+```{r}
+with(subset(diamonds2, !(volume == 0 | volume >= 800) ), cor.test(price, volume))
+```
+
+## Subset the data to exclude diamonds with a volume greater than or equal to 800. 
+## Also, exclude diamonds with a volume of 0. 
+## Adjust the transparency of the points and add a linear model to the plot using geom_smooth() 
+```{r}
+smaller <- diamonds2 %>%
+  filter(volume != 0,
+         volume <= 800)
+
+ggplot(smaller, aes( x = volume, y = price)) + 
+  geom_point(alpha = 1/20) +
+  geom_smooth(method = "lm",
+              se = TRUE)
+```
+
+## create two bar plots on one output image using the grid.arrange() function from the package gridExtra.
+```{r}
+diamonds_by_clarity <- group_by(diamonds, clarity)
+diamonds_mp_by_clarity <- summarise(diamonds_by_clarity, mean_price = mean(price))
+
+diamonds_by_color <- group_by(diamonds, color)
+diamonds_mp_by_color <- summarise(diamonds_by_color, mean_price = mean(price))
+
+# ===================================================================
+
+c1 <- ggplot(diamonds_mp_by_clarity, aes(x=clarity, y=mean_price, fill=clarity)) +
+  geom_bar(stat = "identity", color = "black") +
+  scale_fill_brewer(palette="Set3") + 
+  guides(fill = guide_legend(ncol=2, title.hjust=0.3))
+
+c2 <- ggplot(diamonds_mp_by_color, aes(x=color, y=mean_price, fill=color)) +
+  geom_bar(stat = "identity", color = "black") +
+  scale_fill_brewer(palette="Set2") + 
+  guides(fill = guide_legend(ncol=2, title.hjust=0.4))
+
+grid.arrange(c1, c2)
+```
+
+
