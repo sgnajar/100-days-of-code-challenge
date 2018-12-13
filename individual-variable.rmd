@@ -11,8 +11,7 @@ library(ggplot2)
 library(gridExtra)
 library(scales)
 library(dplyr)
-
-
+## dplyr - a package that helps you transform tidy, tabular data
 ```
 
 ## how many observations are in the dataset?
@@ -144,7 +143,7 @@ diamonds %>%
             IQR = Q3 - Q1)
 ```
 
-## the price range for the middle 50% of the diamonds with color J
+## the price range for the middle 50% of the diamonds with color J.
 ```{r}
 IQR(subset(diamonds, price <1000)$price)
 
@@ -156,3 +155,37 @@ diamonds %>%
             Q3 = quantile(price, 0.75),
             IQR = Q3 - Q1)
 ```
+
+```{r}
+by(diamonds$price, diamonds$color, summary)
+```
+
+# investigate the price per carat of diamonds across the different colors of diamonds using boxplots.
+```{r}
+ggplot(diamonds, aes(x = color, y = price/carat, fill = color)) +
+  geom_boxplot() +
+  coord_cartesian(ylim=c(1000, 6000)) +
+  scale_y_continuous(labels=dollar) + 
+  xlab("Color") + ylab("Price per Carat")
+```
+
+## investigate the weight of the diamonds (carat) using a freq polygon
+## using different bin widths to see how freq polygon changes.
+## what carat size has a count greater than 2000
+
+```{r}
+summary(diamonds$carat)
+sizes = c(0.1, 0.3, 0.8, 1.01, 1.6, 2.0, 3.0, 5.0)
+
+ggplot(diamonds, aes(x=carat)) + 
+  geom_freqpoly(binwidth=0.1, alpha = 0.75) + 
+  scale_x_continuous(breaks=sizes, expand = c(0,0)) +
+  scale_y_continuous(expand=c(0,0))+
+  geom_vline(xintercept = c(0.1, 0.8, 1.6, 2.0, 3.0, 5.0), color = "red", linetype="dashed", alpha = 0.75) +
+  geom_vline(xintercept = c(0.3, 1.01), color = "dark green", linetype = "twodash") +
+  geom_hline(yintercept = 2000, color = "blue", linetype="longdash", alpha = 0.5) + 
+  xlab("Carat Size") + ylab("Count")
+
+```
+
+## tidyr - a package that reshapes the layout of your data ...
