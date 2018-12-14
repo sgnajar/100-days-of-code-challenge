@@ -1,0 +1,34 @@
+---
+title: "two-variables"
+author: "SasanGN"
+date: "December 13, 2018"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+
+## import libraries
+```{r}
+library(ggplot2)
+```
+
+## Reading in the tab separated file // read.csv or read.delim
+```{r}
+getwd()
+list.files()
+inFile <- read.csv('pseudo_facebook.tsv', sep= '\t')
+## inFile2 <- read.delim('pseudo_facebook.tsv')
+names(inFile)
+
+qplot(data = inFile, x= age, y= friend_count)
+```
+
+## ggplot
+```{r}
+ggplot(aes(age, friend_count), data=inFile) + geom_point() +
+  xlim(13,90)
+
+summary(inFile$age)
+
+```
