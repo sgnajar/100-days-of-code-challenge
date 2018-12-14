@@ -187,7 +187,6 @@ qplot(x = www_likes,
 by(inFile$www_likes, inFile$gender, sum)
 ```
 
-
 ## sometimes variables have lots of zero values
 ## logical solution
 ## what percent of check in using mobile?
@@ -206,6 +205,19 @@ sum(inFile$mobile_checkedIn == 1) / length(inFile$mobile_checkedIn)
 ```
 
 
+# Create a line graph of the proportion of friendships initiated ('prop_initiated') vs. tenure and color the line segment by year_joined.bucket.
+```{r}
+fb <- inFile %>%
+  mutate(year_joined = floor(2014 - tenure/365),
+         year_joined_bucket = cut(year_joined, breaks=c(2004, 2009, 2011, 2012, 2014))) 
 
+## Adding in 0's for the mean function instead of leaving out NA's gives a better approximation 
+## for the proportion of friendships initiated for this plot.
 
+fb2 <- fb %>%
+    mutate(prop_initiated = ifelse(friend_count > 0, friendships_initiated/friend_count, 0))
 
+ggplot(subset(fb2, tenure > 0), aes(x=tenure, y=prop_initiated)) +
+  geom_line(aes(color=year_joined_bucket), stat='summary', fun.y=mean) + 
+  theme_minimal()
+```

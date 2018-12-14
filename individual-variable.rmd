@@ -164,7 +164,7 @@ diamonds %>%
 by(diamonds$price, diamonds$color, summary)
 ```
 
-# investigate the price per carat of diamonds across the different colors of diamonds using boxplots.
+## investigate the price per carat of diamonds across the different colors of diamonds using boxplots.
 ```{r}
 ggplot(diamonds, aes(x = color, y = price/carat, fill = color)) +
   geom_boxplot() +
@@ -300,6 +300,48 @@ c2 <- ggplot(diamonds_mp_by_color, aes(x=color, y=mean_price, fill=color)) +
   guides(fill = guide_legend(ncol=2, title.hjust=0.4))
 
 grid.arrange(c1, c2)
+```
+
+## create a histogram of diamond prices. facet the histogram by diamond color and use cut to color the histogram bars.
+```{r}
+ggplot(diamonds, aes(x = price, fill = cut)) +
+  geom_histogram() +
+  facet_wrap(~ color) +
+  scale_fill_brewer(type = 'qual') +
+  scale_x_log10(labels=dollar, expression(paste(Log[10], " of Price"))) +
+  theme(axis.text.x = element_text(angle = 90)) + 
+  ylab("Count")
+```
+
+## create a scatterplot of diamond price vs table and color the points by the cut of the diamond.
+```{r}
+ggplot(diamonds, aes(x = table, y = price, color = cut)) + 
+  geom_jitter(size = 3) +
+  scale_x_continuous(breaks = seq(50, 80, 2),
+                     limits = c(50, 80)) +
+  scale_color_brewer(type = 'qual') +
+  theme_minimal()
+```
+
+## create a scatterplot of diamond price vs. volume (x * y * z) and color the points by the clarity of diamonds. Use scale on the y-axis to take the log10 of price. Also omitted the top 1% of diamond volumes from the plot.
+```{r}
+diamonds <- diamonds %>% 
+  mutate(volume = x * y *z)
+
+ggplot(subset(diamonds, volume <= quantile(volume, 0.99) & volume > 0 ), aes(x = volume, y = price, color = clarity)) +
+  geom_jitter(size = 3) + 
+  scale_y_log10(labels=dollar) +
+  scale_color_brewer(type = 'div') + 
+  theme_minimal()
+```
+
+
+## create a scatter plot of the price/carat ratio of diamonds. The variable x should be assigned to cut. The points colored by diamond color, and the plot should be faceted by clarity.
+```{r}
+ggplot(diamonds, aes(x = cut, y = price/carat, color = color)) + 
+  geom_jitter() + 
+  facet_wrap(~clarity) + 
+  scale_color_brewer(type = 'div')
 ```
 
 
