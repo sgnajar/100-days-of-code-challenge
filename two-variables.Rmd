@@ -20,15 +20,25 @@ list.files()
 inFile <- read.csv('pseudo_facebook.tsv', sep= '\t')
 ## inFile2 <- read.delim('pseudo_facebook.tsv')
 names(inFile)
-
-qplot(data = inFile, x= age, y= friend_count)
 ```
 
-## ggplot
+## qplot vs ggplot
 ```{r}
+qplot(data = inFile, x= age, y= friend_count)
+
 ggplot(aes(age, friend_count), data=inFile) + geom_point() +
   xlim(13,90)
-
 summary(inFile$age)
-
 ```
+
+
+##
+```{r}
+ggplot(aes(age, friend_count), data = inFile) +
+  geom_point(alpha = 1/20) +
+  xlim (13, 90)
+```
+
+
+
+
