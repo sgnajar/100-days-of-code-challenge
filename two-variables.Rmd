@@ -11,6 +11,7 @@ editor_options:
 ## import libraries
 ```{r}
 library(ggplot2)
+library(dplyr)
 ```
 
 ## Reading in the tab separated file // read.csv or read.delim
@@ -22,7 +23,7 @@ inFile <- read.csv('pseudo_facebook.tsv', sep= '\t')
 names(inFile)
 ```
 
-## qplot vs ggplot
+## qplot vs ggplot syntax
 ```{r}
 qplot(data = inFile, x= age, y= friend_count)
 
@@ -31,13 +32,46 @@ ggplot(aes(age, friend_count), data=inFile) + geom_point() +
 summary(inFile$age)
 ```
 
-
-##
+## coord_trans
 ```{r}
 ggplot(aes(age, friend_count), data = inFile) +
-  geom_point(alpha = 1/20) +
-  xlim (13, 90)
+  geom_point(alpha = 1/20, position = position_jitter(h=0)) +
+  xlim (13, 90) +
+  coord_trans(y= 'sqrt')
 ```
+
+## the relationship between friends initiated (y) vs age (x)
+```{r}
+ggplot(aes(age, friendships_initiated), data = inFile) + 
+  geom_point(alpha = 0.1, position = position_jitter(h=0)) +
+  coord_trans(y= 'sqrt')
+
+```
+
+## conditional means, group data by age
+```{r}
+age_groups <- group_by(inFile, age)
+inFile.fc_by_age <- summarise(age_groups,
+          friend_count_mean = mean(friend_count),
+          friend_count_median = median(friend_count),
+          n = n())
+inFile.fc_by_age 
+
+head(inFile.fc_by_age)
+```
+
+## alt. way to do the same result
+```{r}
+inFile.fc_by_age <- inFile %>%
+  group_by(age) %>%
+  summarise(friend_count_mean = mean(friend_count),
+            friend_count_median = median(friend_count),
+            n = n()) %>%
+  arrange(age)
+head(inFile.fc_by_age, 20)
+```
+
+
 
 
 
