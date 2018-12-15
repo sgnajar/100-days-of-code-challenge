@@ -17,6 +17,7 @@ library(dplyr)
 ## Reading in the tab separated file // read.csv or read.delim
 ```{r}
 getwd()
+setwd("D://Documents//GitHub//100-days-of-code-challenge/")
 list.files()
 inFile <- read.csv('pseudo_facebook.tsv', sep= '\t')
 ## inFile2 <- read.delim('pseudo_facebook.tsv')
@@ -71,8 +72,23 @@ inFile.fc_by_age <- inFile %>%
 head(inFile.fc_by_age, 20)
 ```
 
+## plot average friend count vs age using a line graph
+## using geom_line()
 
+```{r}
+ggplot(aes(age, friend_count_mean), data = inFile.fc_by_age) + 
+  geom_line()
+```
 
+## overlaying summaries with raw data!
+```{r}
+ggplot(aes(x= age, y = friend_count), data = inFile) +
+  xlim (13,90) +
+  geom_point(alpha = 0.05, position = position_jitter(h=0), color = 'red') +
+  coord_trans(y='sqrt') +
+  geom_line(stat = 'summary', fun.y = mean) +
+  geom_line(stat = 'summary', fun.y = quantile, fun.args = list(probs = .5, linetype = 2, color = 'green')) + 
+  geom_line(stat = 'summary', fun.y = quantile, fun.args = list(probs = .9, linetype = 2, color = 'blue'))
 
-
+```
 
