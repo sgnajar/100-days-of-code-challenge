@@ -123,3 +123,25 @@ with(inFile, cor.test(www_likes_received, likes_received))
 ```
 
 
+## Mitchell soil temperature data set
+```{r}
+install.packages('alr3')
+library(alr3)
+data(Mitchell)
+?Mitchell
+names(Mitchell) 
+```
+
+```{r}
+with(Mitchell, cor.test(Month, Temp))
+range(Mitchell$Month)
+
+ggplot(aes(Month, Temp), data = Mitchell) +
+  geom_point() +
+  scale_x_continuous(breaks = seq(0, 203, 12))
+```
+
+
+
+
+
