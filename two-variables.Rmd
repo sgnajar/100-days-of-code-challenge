@@ -80,6 +80,17 @@ ggplot(aes(age, friend_count_mean), data = inFile.fc_by_age) +
   geom_line()
 ```
 
+```{r}
+inFile$age_with_months <- inFile$age + (1 - inFile$dob_month /12)
+inFile$age_with_months
+```
+
+## age with months mean
+```{r}
+inFile.fc_by_age
+
+```
+
 ## overlaying summaries with raw data!
 ```{r}
 ggplot(aes(x= age, y = friend_count), data = inFile) +
@@ -89,7 +100,6 @@ ggplot(aes(x= age, y = friend_count), data = inFile) +
   geom_line(stat = 'summary', fun.y = quantile, fun.args = list(probs = .1), linetype = 2, color = 'yellow') + 
   geom_line(stat = 'summary', fun.y = quantile, fun.args = list(probs = .5), color = 'green') + 
   geom_line(stat = 'summary', fun.y = quantile, fun.args  = list(probs = .9), linetype = 2, color = 'blue')
-
 ```
 
 ?cor.test
@@ -121,8 +131,6 @@ ggplot(aes(www_likes_received, likes_received), data = inFile) +
 ```{r}
 with(inFile, cor.test(www_likes_received, likes_received))
 ```
-
-
 ## Mitchell soil temperature data set
 ```{r}
 install.packages('alr3')
@@ -139,6 +147,10 @@ range(Mitchell$Month)
 ggplot(aes(Month, Temp), data = Mitchell) +
   geom_point() +
   scale_x_continuous(breaks = seq(0, 203, 12))
+
+## creating sinusoidal
+ggplot(aes(x=(Month%%12),y=Temp), data=Mitchell)+
+  geom_point()
 ```
 
 
