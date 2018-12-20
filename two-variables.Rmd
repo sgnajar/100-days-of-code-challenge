@@ -46,7 +46,6 @@ ggplot(aes(age, friend_count), data = inFile) +
 ggplot(aes(age, friendships_initiated), data = inFile) + 
   geom_point(alpha = 0.1, position = position_jitter(h=0)) +
   coord_trans(y= 'sqrt')
-
 ```
 
 ## conditional means, group data by age
@@ -74,7 +73,6 @@ head(inFile.fc_by_age, 20)
 
 ## plot average friend count vs age using a line graph
 ## using geom_line()
-
 ```{r}
 ggplot(aes(age, friend_count_mean), data = inFile.fc_by_age) + 
   geom_line()
@@ -87,9 +85,56 @@ inFile$age_with_months
 
 ## age with months mean
 ```{r}
-inFile.fc_by_age
+inFile$age_with_months <- inFile$age + (1 - inFile$dob_month /12)
+age_groups_months <- group_by(inFile, inFile$age_with_months)
 
+inFile.fc_by_age_months <- summarise(age_groups_months,
+          friend_count_mean = mean(friend_count),
+          friend_count_median = median(friend_count),
+          n = n())
+inFile.fc_by_age_months <- arrange(inFile.fc_by_age_months, age_with_months)
+head(inFile.fc_by_age_months)
 ```
+## alt way
+```{r}
+library(dplyr)
+inFile$age_with_months <- inFile$age + (1 - inFile$dob_month /12)
+
+inFile.fc_by_age_months2 <- inFile %>%
+  group_by(age_with_months) %>%
+  summarise(friend_count_mean = mean(friend_count),
+            friend_count_median = median(friend_count),
+            n = n()) %>%
+              arrange(age_with_months)
+head(inFile.fc_by_age_months2)
+```
+
+## plot friend_count_mean vs age_with_months
+```{r}
+ggplot(aes(x = age_with_months, y = friend_count_mean), 
+       data = subset(inFile.fc_by_age_months2, age_with_months < 71)) +
+  geom_line()
+```
+
+```{r}
+p1 <- ggplot(aes(x=age, y= friend_count_mean),
+             data = subset(inFile.fc_by_age, age< 71)) + 
+  geom_line() +
+  geom_smooth()
+
+p2 <- ggplot(aes(x=age_with_months, y=friend_count_mean),
+             data = subset(inFile.fc_by_age_months2, age_with_months < 71)) +
+  geom_line() +
+  geom_smooth()
+
+p3 <- ggplot(aes(x=round(age/5)*5, y= friend_count),
+             data = subset(inFile, age < 71)) +
+  geom_line(stat = 'summary', fun.y = mean)
+library(gridExtra)
+grid.arrange(p2, p1, p3, ncol = 1)
+```
+
+
 
 ## overlaying summaries with raw data!
 ```{r}
@@ -152,8 +197,3 @@ ggplot(aes(Month, Temp), data = Mitchell) +
 ggplot(aes(x=(Month%%12),y=Temp), data=Mitchell)+
   geom_point()
 ```
-
-
-
-
-
