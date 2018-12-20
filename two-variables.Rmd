@@ -87,8 +87,9 @@ ggplot(aes(x= age, y = friend_count), data = inFile) +
   geom_point(alpha = 0.05, position = position_jitter(h=0), color = 'red') +
   coord_trans(y='sqrt') +
   geom_line(stat = 'summary', fun.y = mean) +
-  geom_line(stat = 'summary', fun.y = quantile, fun.args = list(probs = .5, linetype = 2, color = 'green')) + 
-  geom_line(stat = 'summary', fun.y = quantile, fun.args = list(probs = .9, linetype = 2, color = 'blue'))
+  geom_line(stat = 'summary', fun.y = quantile, fun.args = list(probs = .1), linetype = 2, color = 'yellow') + 
+  geom_line(stat = 'summary', fun.y = quantile, fun.args = list(probs = .5), color = 'green') + 
+  geom_line(stat = 'summary', fun.y = quantile, fun.args  = list(probs = .9), linetype = 2, color = 'blue')
 
 ```
 
