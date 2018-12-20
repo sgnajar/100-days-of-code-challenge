@@ -83,13 +83,43 @@ ggplot(aes(age, friend_count_mean), data = inFile.fc_by_age) +
 ## overlaying summaries with raw data!
 ```{r}
 ggplot(aes(x= age, y = friend_count), data = inFile) +
-  xlim (13,90) +
+  coord_cartesian(xlim=c(13, 60), ylim = c(0,1000))+
   geom_point(alpha = 0.05, position = position_jitter(h=0), color = 'red') +
-  coord_trans(y='sqrt') +
   geom_line(stat = 'summary', fun.y = mean) +
   geom_line(stat = 'summary', fun.y = quantile, fun.args = list(probs = .1), linetype = 2, color = 'yellow') + 
   geom_line(stat = 'summary', fun.y = quantile, fun.args = list(probs = .5), color = 'green') + 
   geom_line(stat = 'summary', fun.y = quantile, fun.args  = list(probs = .9), linetype = 2, color = 'blue')
 
 ```
+
+?cor.test
+
+## correlation
+```{r}
+cor.test(inFile$age, inFile$friend_count, method = 'pearson')
+## or
+with(inFile, cor.test(age, friend_count, method = 'pearson'))
+```
+
+## correlation on subset data
+```{r}
+with(subset(inFile, age <= 70), cor.test(age, friend_count, method = 'spearman'))
+```
+
+## scatterplot of likes_received (y) vs. www_likes_received (x)
+```{r}
+names(inFile)
+ggplot(aes(www_likes_received, likes_received), data = inFile) + 
+  geom_point() +
+  xlim(0, quantile(inFile$www_likes_received, 0.95)) +
+  ylim(0, quantile(inFile$likes_received, 0.95)) +
+  geom_smooth(method = 'lm', color = 'red')
+```
+
+
+## correlation between the above two variables
+```{r}
+with(inFile, cor.test(www_likes_received, likes_received))
+```
+
 
