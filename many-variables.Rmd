@@ -1,0 +1,10 @@
+---
+title: "many-variables"
+author: "SasanGN"
+date: "December 20, 2018"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+
