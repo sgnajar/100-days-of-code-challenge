@@ -7,4 +7,59 @@ editor_options:
   chunk_output_type: console
 ---
 
+## import libraries
+```{r}
+library(ggplot2)
+library(dplyr)
+```
+
+## Reading in the tab separated file // read.csv or read.delim
+```{r}
+getwd()
+setwd("D://Documents//GitHub//100-days-of-code-challenge/")
+list.files()
+pf <- read.csv('pseudo_facebook.tsv', sep= '\t')
+## inFile2 <- read.delim('pseudo_facebook.tsv')
+names(pf)
+```
+
+```{r}
+ggplot(aes(x = gender, y = age),
+       data = subset(pf, !is.na(gender))) + geom_boxplot() +
+  stat_summary(fun.y = mean, geom = 'point', shape = 4)
+
+ggplot(aes(age, friend_count), 
+       data = subset(pf, !is.na(gender))) +
+  geom_line(aes(color = gender), stat = 'summary', fun.y = median)
+```
+
+
+```{r}
+pf.fc_by_age_gender <- pf %>%
+  filter(!is.na(gender)) %>%
+  group_by(age, gender) %>%
+  summarise(friend_count_mean = mean(friend_count),
+            friend_count_median = median(friend_count),
+            n = n()) %>%
+  ungroup() %>%
+  arrange(age)
+head(pf.fc_by_age_gender, 20)
+```
+
+
+## create a line graph showing the median friend count over the ages of each gender
+```{r}
+ggplot(aes(age, friend_count_median),
+       data = pf.fc_by_age_gender) + geom_line(aes(color = gender))
+```
+
+## to be continued...
+
+
+
+
+
+
+
+
 
